@@ -5,37 +5,58 @@ import glob
 import os
 import random
 import string
+from collections import Counter
+import numpy as np
+import time
+from tqdm import tqdm
 
 def strip_pos(word):
     return word.split('/')[0]  # Remove POS tag if present
 
 folder_path = r"C:\Dev\Genai\sannaLLM\brown"
+print(f"Loading files from: {folder_path}")
 all_filenames = [f for f in glob.glob(os.path.join(folder_path, "*")) if os.path.isfile(f)]
+print(f"Found {len(all_filenames)} files.")
+random.shuffle(all_filenames)
 
-# 1. Build vocabulary from all files
-vocab_set = set()
-max_vocab_files = len(all_filenames)
-for filename in all_filenames[:max_vocab_files]:
+# 1. Build vocabulary from all files, count word frequencies
+word_counter = Counter()
+sentences = []
+print("Building vocabulary and loading sentences...")
+for filename in tqdm(all_filenames, desc="Reading files"):
     with open(filename, 'r', encoding='utf-8') as f:
         for line in f:
             if " " in line and any(c.isalpha() for c in line):
-                for w in line.lower().split():
-                    w = w.strip(string.punctuation)
-                    w = strip_pos(w)
-                    if w:
-                        vocab_set.add(w)
-vocab = list(vocab_set)
+                # Add sentence boundary tokens
+                words = ['<s>'] + [strip_pos(w.strip(string.punctuation)) for w in line.lower().split() if w.strip(string.punctuation)] + ['</s>']
+                word_counter.update(words)
+                sentences.append(words)
+print(f"Total sentences loaded: {len(sentences)}")
+print(f"Total unique words (before filtering): {len(word_counter)}")
+
+# 2. Filter vocabulary: keep words that appear at least 5 times
+min_word_freq = 5
+vocab = [w for w, c in word_counter.items() if c >= min_word_freq]
+if '<unk>' not in vocab:
+    vocab.append('<unk>')
 vocab_size = len(vocab)
 word_to_idx = {w: i for i, w in enumerate(vocab)}
 idx_to_word = {i: w for i, w in enumerate(vocab)}
 
-print(f"Total unique words in vocabulary: {vocab_size}")
+print(f"Total unique words in vocabulary (min freq {min_word_freq}): {vocab_size}")
 
-# 2. Model setup: 3-gram feedforward
-embedding_dim = 64
-hidden_dim = 128
+# 3. Split into train/validation files (90% train, 10% val)
+split_idx = int(0.9 * len(sentences))
+train_sentences = sentences[:split_idx]
+val_sentences = sentences[split_idx:]
+print(f"Train sentences: {len(train_sentences)}, Validation sentences: {len(val_sentences)}")
+
+# 4. Model setup: 3-gram feedforward
+embedding_dim = 128
+hidden_dim = 256
 output_dim = vocab_size
 ngram = 3
+batch_size = 128
 
 class NgramWordLM(nn.Module):
     def __init__(self, vocab_size, embedding_dim, hidden_dim, output_dim, ngram=3):
@@ -56,52 +77,102 @@ class NgramWordLM(nn.Module):
 
 model = NgramWordLM(vocab_size, embedding_dim, hidden_dim, output_dim, ngram=ngram)
 total_params = sum(p.numel() for p in model.parameters())
-print(f"Total parameters: {total_params}")
+print(f"Total parameters in model: {total_params}")
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-# 3. Train on each file sequentially
-num_epochs_per_file = 1  # You can increase this for more thorough training
-for file_idx, filename in enumerate(all_filenames):
-    file_words = []
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f:
-            if " " in line and any(c.isalpha() for c in line):
-                for w in line.lower().split():
-                    w = w.strip(string.punctuation)
-                    w = strip_pos(w)
-                    if w and w in word_to_idx:
-                        file_words.append(w)
-    if len(file_words) < ngram + 1:
-        continue  # Skip files that are too short
-    # Prepare n-gram training data
-    inputs = []
-    targets = []
-    for i in range(len(file_words) - ngram):
-        context = file_words[i:i+ngram]
-        target = file_words[i+ngram]
-        inputs.append([word_to_idx[w] for w in context])
-        targets.append(word_to_idx[target])
-    if not inputs:
-        continue
-    inputs = torch.tensor(inputs, dtype=torch.long)
-    targets = torch.tensor(targets, dtype=torch.long)
-    for epoch in range(num_epochs_per_file):
+# 5. Helper: Convert words to indices, use <unk> for OOV
+def words_to_indices(words):
+    return [word_to_idx.get(w, word_to_idx['<unk>']) for w in words]
+
+# 6. Helper: Create n-gram dataset from sentences
+def make_ngram_dataset(sentences, ngram):
+    inputs, targets = [], []
+    for words in sentences:
+        if len(words) < ngram + 1:
+            continue
+        idxs = words_to_indices(words)
+        for i in range(len(idxs) - ngram):
+            context = idxs[i:i+ngram]
+            target = idxs[i+ngram]
+            inputs.append(context)
+            targets.append(target)
+    return np.array(inputs), np.array(targets)
+
+print("Preparing training and validation datasets...")
+train_inputs, train_targets = make_ngram_dataset(train_sentences, ngram)
+val_inputs, val_targets = make_ngram_dataset(val_sentences, ngram)
+print(f"Train samples: {len(train_inputs)}, Validation samples: {len(val_inputs)}")
+
+# 8. Training loop with mini-batching and early stopping
+num_epochs = 10
+patience = 2
+best_val_loss = float('inf')
+epochs_no_improve = 0
+
+print("\nStarting training...")
+for epoch in range(num_epochs):
+    print(f"\nEpoch {epoch+1}/{num_epochs} starting...")
+    start_time = time.time()
+
+    # Shuffle training data
+    perm = np.random.permutation(len(train_inputs))
+    train_inputs = train_inputs[perm]
+    train_targets = train_targets[perm]
+    model.train()
+    total_loss = 0
+
+    # Progress bar for training batches
+    for i in tqdm(range(0, len(train_inputs), batch_size), desc=f"Training Epoch {epoch+1}"):
+        batch_in = torch.tensor(train_inputs[i:i+batch_size], dtype=torch.long)
+        batch_tg = torch.tensor(train_targets[i:i+batch_size], dtype=torch.long)
         optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
+        outputs = model(batch_in)
+        loss = criterion(outputs, batch_tg)
         loss.backward()
         optimizer.step()
-    if (file_idx + 1) % 10 == 0 or file_idx == len(all_filenames) - 1:
-        print(f"Trained on file {file_idx + 1} of {len(all_filenames)} (Loss: {loss.item():.4f})")
+        total_loss += loss.item() * batch_in.size(0)
+    avg_train_loss = total_loss / len(train_inputs)
 
-# 4. Generate a sequence of words
+    # Validation
+    model.eval()
+    with torch.no_grad():
+        val_loss = 0
+        for i in tqdm(range(0, len(val_inputs), batch_size), desc=f"Validation Epoch {epoch+1}"):
+            batch_in = torch.tensor(val_inputs[i:i+batch_size], dtype=torch.long)
+            batch_tg = torch.tensor(val_targets[i:i+batch_size], dtype=torch.long)
+            outputs = model(batch_in)
+            loss = criterion(outputs, batch_tg)
+            val_loss += loss.item() * batch_in.size(0)
+        avg_val_loss = val_loss / len(val_inputs)
+    end_time = time.time()
+    print(f"Epoch {epoch+1} completed in {end_time - start_time:.2f} seconds.")
+    print(f"Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
+
+    # Early stopping
+    if avg_val_loss < best_val_loss:
+        best_val_loss = avg_val_loss
+        epochs_no_improve = 0
+        torch.save(model.state_dict(), "best_ngram_model.pt")
+        print("Validation loss improved, model saved.")
+    else:
+        epochs_no_improve += 1
+        print(f"No improvement in validation loss for {epochs_no_improve} epoch(s).")
+        if epochs_no_improve >= patience:
+            print("Early stopping triggered.")
+            break
+
+# Load best model
+print("Loading best model from disk...")
+model.load_state_dict(torch.load("best_ngram_model.pt"))
+
+# 9. Generate a sequence of words
 def generate_sequence(seed_words, num_words=20, sampling=True, temperature=1.0):
     generated = list(seed_words)
     current_words = list(seed_words)
     for _ in range(num_words):
-        input_idx = torch.tensor([[word_to_idx.get(w, 0) for w in current_words]], dtype=torch.long)
+        input_idx = torch.tensor([[word_to_idx.get(w, word_to_idx['<unk>']) for w in current_words]], dtype=torch.long)
         output = model(input_idx)
         probs = torch.softmax(output / temperature, dim=1).detach().numpy().flatten()
         if sampling:
@@ -113,7 +184,7 @@ def generate_sequence(seed_words, num_words=20, sampling=True, temperature=1.0):
         current_words = current_words[1:] + [next_word]
     return ' '.join(generated)
 
-# 5. Prompt user for seed words and generate text until 'exit' is entered
+# 10. Prompt user for seed words and generate text until 'exit' is entered
 while True:
     seed_input = input(f"\nEnter {ngram} seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): ").strip().lower()
     if seed_input == 'exit':
@@ -129,5 +200,6 @@ while True:
     if not all(w in word_to_idx for w in seed_words):
         print("One or more seed words are not in the vocabulary. Try again or type 'sample'.")
         continue
+    print("Generating sequence, please wait...")
     generated_text = generate_sequence(seed_words, num_words=30, sampling=True, temperature=1.0)
     print(f"\nGenerated sequence:\n{generated_text}\n")
