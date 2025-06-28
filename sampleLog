@@ -1,0 +1,133 @@
+(phi2) PS C:\Dev\Genai\sannaLLM> python .\sannaLLM.py
+Using device: cpu
+Available CPU cores: 8
+PyTorch threads: 8
+All outputs will be saved in: ngram_output_20250628_205512
+Loading files from: C:\Dev\Genai\sannaLLM\brown
+Found 503 files.
+Building vocabulary and loading sentences...
+Reading files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 503/503 [00:01<00:00, 262.81it/s]
+Total sentences loaded: 60922
+Total unique words (before filtering): 52849
+Total unique words in vocabulary (min freq 5): 14545
+Train sentences: 54829, Validation sentences: 6093
+Total parameters in model: 5698385
+Model is on device: cpu
+Hyperparameters saved.
+Preparing training and validation datasets...
+Train samples: 876482, Validation samples: 99388
+Using single-threaded DataLoader for Windows compatibility
+
+Starting training...
+Initial resource usage:
+CPU usage: 30.3%
+Memory usage: 29.8%
+
+Epoch 1/10 starting...
+Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1712/1712 [05:48<00:00,  4.91it/s] 
+Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 195/195 [00:11<00:00, 17.34it/s]
+Epoch 1 completed in 360.00 seconds.
+Train Loss=6.1482, Val Loss=5.9957
+Estimated time remaining: 00:53:59
+Validation loss improved, model and optimizer saved.
+
+Epoch 2/10 starting...
+Training Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1712/1712 [05:28<00:00,  5.21it/s]
+Validation Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 195/195 [00:17<00:00, 10.86it/s]
+Epoch 2 completed in 346.59 seconds.
+Train Loss=5.5141, Val Loss=5.9983
+Estimated time remaining: 00:47:06
+No improvement in validation loss for 1 epoch(s).
+
+Epoch 3/10 starting...
+Training Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1712/1712 [06:05<00:00,  4.69it/s] 
+Validation Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 195/195 [00:15<00:00, 12.55it/s] 
+Epoch 3 completed in 380.59 seconds.
+Train Loss=5.1048, Val Loss=6.2350
+Estimated time remaining: 00:42:16
+Resource usage:
+CPU usage: 100.0%
+Memory usage: 29.8%
+No improvement in validation loss for 2 epoch(s).
+Early stopping triggered.
+
+Total training completed in 18.12 minutes.
+Vocabulary saved.
+Training log saved.
+Loading best model from disk...
+
+Auto-generating sample text...
+Seed: the quick brown -> the quick brown real remark </s> <unk> still yet <unk> column to <unk> me 18 also reliable alabama that they assures and extremely
+Seed: in the beginning -> in the beginning of his editorial </s> forces </s> or helpless yale the young passing of master sex is poor had a broad
+Seed: it was a -> it was a day enough of them will at the street also asked if capacity </s> suggested the bar red existed of this
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): india america england
+Generating sequence, please wait...
+
+Generated sequence:
+Generated sequence:
+india america england skill up and if the bank had <unk> the girl was throughout the side of the director and more than come seemed only out ourselves the former bindia america england skill up and if the bank had <unk> the girl was throughout the side of the director and more than come seemed only out ourselves the former born to clay
+
+
+
+
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): me you they
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): me you they
+Generating sequence, please wait...
+Generating sequence, please wait...
+
+
+Generated sequence:
+Generated sequence:
+me you they know what to say this poetry new york overseas was national jobs the averages and wanted a training person <unk> </s> a capacity section alone used for a great bitter
+
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): was national jobs the
+Please enter exactly 3 seed words.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): was national jobs
+Generating sequence, please wait...
+
+Generated sequence:
+was national jobs and he so to reach visit powers </s> </s> to congress at the masters for the advantage </s> of stories random <unk> through it as the bonds supplied then index
+
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran
+Please enter exactly 3 seed words.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran usa
+Please enter exactly 3 seed words.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran usa america
+One or more seed words are not in the vocabulary. Try again or type 'sample'.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran india usa
+One or more seed words are not in the vocabulary. Try again or type 'sample'.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): sample
+Sample vocabulary words: ['whipple', 'likes', 'census', 'eyes', 'things', 'trig', 'potentially', 'nightmare', 'hub', 'merging', 'condemned', 'happiness', '2', 'counterpart', 'furs', 'honeymoon', "palfrey's", 'descended', 'cuban', 'hotter']
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): census potentially merging
+Generating sequence, please wait...
+
+Generated sequence:
+census potentially merging partly account which came at it </s> will be so in the sort of god's processes defense last year <unk> in those who answer </s> too and openly attention with
+
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): america hot pizza
+One or more seed words are not in the vocabulary. Try again or type 'sample'.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): pizza pizza pizza
+One or more seed words are not in the vocabulary. Try again or type 'sample'.
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): america america america
+Generating sequence, please wait...
+
+Generated sequence:
+america america america have held in the way war forced to match the chance number a lump kind of r politics <unk> who week nothing </s> that weather a resume breakdown of their
+
+
+Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): exit  
+Exiting.
+(phi2) PS C:\Dev\Genai\sannaLLM> 
