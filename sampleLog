@@ -2,132 +2,269 @@
 Using device: cpu
 Available CPU cores: 8
 PyTorch threads: 8
-All outputs will be saved in: ngram_output_20250628_205512
+PyTorch version: 2.7.0+cpu
+All outputs will be saved in: ngram_output_20250628_230101
 Loading files from: C:\Dev\Genai\sannaLLM\brown
 Found 503 files.
 Building vocabulary and loading sentences...
-Reading files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 503/503 [00:01<00:00, 262.81it/s]
+Reading files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 503/503 [00:00<00:00, 548.21it/s]
 Total sentences loaded: 60922
 Total unique words (before filtering): 52849
 Total unique words in vocabulary (min freq 5): 14545
 Train sentences: 54829, Validation sentences: 6093
 Total parameters in model: 5698385
 Model is on device: cpu
+Learning rate scheduler initialized
 Hyperparameters saved.
 Preparing training and validation datasets...
-Train samples: 876482, Validation samples: 99388
+Train samples: 874276, Validation samples: 101594
 Using single-threaded DataLoader for Windows compatibility
 
-Starting training...
+Starting training with improved early stopping:
+- Patience: 8 epochs
+- Minimum epochs before early stopping: 5
+- Improvement threshold: 0.0001
 Initial resource usage:
-CPU usage: 30.3%
-Memory usage: 29.8%
+CPU usage: 20.7%
+Memory usage: 30.6%
 
+============================================================
 Epoch 1/10 starting...
-Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1712/1712 [05:48<00:00,  4.91it/s] 
-Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 195/195 [00:11<00:00, 17.34it/s]
-Epoch 1 completed in 360.00 seconds.
-Train Loss=6.1482, Val Loss=5.9957
-Estimated time remaining: 00:53:59
-Validation loss improved, model and optimizer saved.
+Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [04:08<00:00,  6.88it/s] 
+Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:09<00:00, 21.59it/s] 
 
+Epoch 1 Results:
+- Duration: 265.91 seconds
+- Train Loss: 6.144307
+- Val Loss: 6.035058
+- Perplexity: 417.82
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: inf
+- Estimated time remaining: 00:39:53
+✓ Validation loss improved by inf, model saved.
+
+============================================================
 Epoch 2/10 starting...
-Training Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1712/1712 [05:28<00:00,  5.21it/s]
-Validation Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 195/195 [00:17<00:00, 10.86it/s]
-Epoch 2 completed in 346.59 seconds.
-Train Loss=5.5141, Val Loss=5.9983
-Estimated time remaining: 00:47:06
-No improvement in validation loss for 1 epoch(s).
+Training Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [04:36<00:00,  6.18it/s] 
+Validation Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:12<00:00, 16.55it/s] 
 
+Epoch 2 Results:
+- Duration: 301.03 seconds
+- Train Loss: 5.512711
+- Val Loss: 6.039669
+- Perplexity: 419.75
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:37:47
+✗ No significant improvement for 1 epoch(s) (threshold: 0.000100)
+   - Still in minimum epochs phase (2/5)
+
+============================================================
 Epoch 3/10 starting...
-Training Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1712/1712 [06:05<00:00,  4.69it/s] 
-Validation Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 195/195 [00:15<00:00, 12.55it/s] 
-Epoch 3 completed in 380.59 seconds.
-Train Loss=5.1048, Val Loss=6.2350
-Estimated time remaining: 00:42:16
+Training Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [05:31<00:00,  5.16it/s] 
+Validation Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:12<00:00, 16.36it/s] 
+
+Epoch 3 Results:
+- Duration: 354.78 seconds
+- Train Loss: 5.106411
+- Val Loss: 6.259597
+- Perplexity: 523.01
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:35:50
+
+Resource usage:
+CPU usage: 99.9%
+Memory usage: 30.3%
+✗ No significant improvement for 2 epoch(s) (threshold: 0.000100)
+   - Still in minimum epochs phase (3/5)
+
+============================================================
+Epoch 4/10 starting...
+Training Epoch 4: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [05:26<00:00,  5.23it/s]
+Validation Epoch 4: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:15<00:00, 12.96it/s] 
+
+Epoch 4 Results:
+- Duration: 353.32 seconds
+- Train Loss: 4.739096
+- Val Loss: 6.667015
+- Perplexity: 786.05
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:31:52
+✗ No significant improvement for 3 epoch(s) (threshold: 0.000100)
+   - Still in minimum epochs phase (4/5)
+
+============================================================
+Epoch 5/10 starting...
+Training Epoch 5: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [05:25<00:00,  5.25it/s] 
+Validation Epoch 5: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:12<00:00, 16.38it/s] 
+Learning rate reduced: 1.00e-03 -> 5.00e-04
+
+Epoch 5 Results:
+- Duration: 348.99 seconds
+- Train Loss: 4.454499
+- Val Loss: 7.072742
+- Perplexity: 1179.38
+- Learning Rate: 5.00e-04
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:27:04
+✗ No significant improvement for 4 epoch(s) (threshold: 0.000100)
+   - Still in minimum epochs phase (5/5)
+
+============================================================
+Epoch 6/10 starting...
+Training Epoch 6: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [05:50<00:00,  4.87it/s] 
+Validation Epoch 6: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:12<00:00, 16.47it/s] 
+
+Epoch 6 Results:
+- Duration: 373.91 seconds
+- Train Loss: 4.137397
+- Val Loss: 7.413976
+- Perplexity: 1659.01
+- Learning Rate: 5.00e-04
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:22:11
+
+Resource usage:
+CPU usage: 99.9%
+Memory usage: 30.1%
+✗ No significant improvement for 5 epoch(s) (threshold: 0.000100)
+
+============================================================
+Epoch 7/10 starting...
+Training Epoch 7: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [06:30<00:00,  4.37it/s]
+Validation Epoch 7: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:12<00:00, 16.34it/s] 
+
+Epoch 7 Results:
+- Duration: 414.55 seconds
+- Train Loss: 4.028608
+- Val Loss: 7.678196
+- Perplexity: 2160.72
+- Learning Rate: 5.00e-04
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:17:13
+✗ No significant improvement for 6 epoch(s) (threshold: 0.000100)
+
+============================================================
+Epoch 8/10 starting...
+Training Epoch 8: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [07:53<00:00,  3.61it/s] 
+Validation Epoch 8: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:12<00:00, 15.90it/s] 
+
+Epoch 8 Results:
+- Duration: 497.72 seconds
+- Train Loss: 3.943973
+- Val Loss: 7.908604
+- Perplexity: 2720.59
+- Learning Rate: 5.00e-04
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:12:07
+✗ No significant improvement for 7 epoch(s) (threshold: 0.000100)
+
+============================================================
+Epoch 9/10 starting...
+Training Epoch 9: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1708/1708 [06:47<00:00,  4.19it/s] 
+Validation Epoch 9: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:08<00:00, 24.72it/s] 
+Learning rate reduced: 5.00e-04 -> 2.50e-04
+
+Epoch 9 Results:
+- Duration: 423.19 seconds
+- Train Loss: 3.870104
+- Val Loss: 8.128508
+- Perplexity: 3389.74
+- Learning Rate: 2.50e-04
+- Best Val Loss so far: 6.035058
+- Estimated time remaining: 00:06:10
+
 Resource usage:
 CPU usage: 100.0%
-Memory usage: 29.8%
-No improvement in validation loss for 2 epoch(s).
-Early stopping triggered.
+Memory usage: 29.6%
+✗ No significant improvement for 8 epoch(s) (threshold: 0.000100)
 
-Total training completed in 18.12 minutes.
+🛑 Early stopping triggered after 9 epochs!
+   - No improvement for 8 consecutive epochs
+   - Minimum epochs requirement (5) satisfied
+
+============================================================
+Training completed!
+Total time: 55.56 minutes
+Final best validation loss: 6.035058
+Final perplexity: 3389.74
 Vocabulary saved.
-Training log saved.
+Enhanced training log saved.
+
 Loading best model from disk...
 
-Auto-generating sample text...
-Seed: the quick brown -> the quick brown real remark </s> <unk> still yet <unk> column to <unk> me 18 also reliable alabama that they assures and extremely
-Seed: in the beginning -> in the beginning of his editorial </s> forces </s> or helpless yale the young passing of master sex is poor had a broad
-Seed: it was a -> it was a day enough of them will at the street also asked if capacity </s> suggested the bar red existed of this
+============================================================
+Auto-generating sample text with different strategies...
 
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): india america england
-Generating sequence, please wait...
+Seed: 'the quick brown'
+  Greedy: the quick brown
+  Temp=0.8: the quick brown tossed ran along the area because of the sunday af
+  Top-k=10: the quick brown to <unk> and <unk> of the <unk> <unk>
 
-Generated sequence:
-Generated sequence:
-india america england skill up and if the bank had <unk> the girl was throughout the side of the director and more than come seemed only out ourselves the former bindia america england skill up and if the bank had <unk> the girl was throughout the side of the director and more than come seemed only out ourselves the former born to clay
+Seed: 'in the beginning'
+  Greedy: in the beginning of the <unk> <unk>
+  Temp=0.8: in the beginning of the boy <unk>
+  Top-k=10: in the beginning of <unk>
 
+Seed: 'it was a'
+  Greedy: it was a <unk> of the <unk> <unk>
+  Temp=0.8: it was a <unk> and <unk> w. and intelligence <unk> that appears of the sacred <unk> churches values
+  Top-k=10: it was a more <unk>
 
+Seed: 'once upon a'
+  Greedy: once upon a <unk> of the <unk> <unk>
+  Temp=0.8: once upon a fluids of the <unk> <unk> and the united states exercise and <unk> his life
+  Top-k=10: once upon a little <unk> of the <unk> <unk> is not in the first <unk> of a <unk>
 
+============================================================
+Interactive Text Generation
+Commands:
+  - Enter 3 seed words separated by spaces
+  - Type 'sample' to see vocabulary examples
+  - Type 'stats' to see model statistics
+  - Type 'exit' to quit
 
+Enter 3 seed words: sample
+Sample vocabulary words: ['sundry', 'waters', 'racing', 'frowned', 'challenge', 'words', 'flash', 'norberg', 'congestion', 'contributed', "shouldn't", 'fighters', "don't", 'debentures', 'storage', '1933', 'spacious', 'right', 'battens', 'eight']
 
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): me you they
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): me you they
-Generating sequence, please wait...
-Generating sequence, please wait...
+Enter 3 seed words: flash flood river
+🔄 Generating sequences...
 
+📝 Generated Text:
+  Conservative: flash flood river
+  Balanced: flash flood river or dining in the water
+  Creative: flash flood river around his reacted men
 
-Generated sequence:
-Generated sequence:
-me you they know what to say this poetry new york overseas was national jobs the averages and wanted a training person <unk> </s> a capacity section alone used for a great bitter
+Enter 3 seed words: india iran america
+❌ Words not in vocabulary: ['iran']
+Try 'sample' to see available words.
 
+Enter 3 seed words: india england america
+🔄 Generating sequences...
 
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): was national jobs the
-Please enter exactly 3 seed words.
+📝 Generated Text:
+  Conservative: india england america
+  Balanced: india england america in the <unk> of the weekend <unk> <unk>
+  Creative: india england america was admired bad 1961 feed <unk>
 
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): was national jobs
-Generating sequence, please wait...
+Enter 3 seed words: hello good evening
+🔄 Generating sequences...
 
-Generated sequence:
-was national jobs and he so to reach visit powers </s> </s> to congress at the masters for the advantage </s> of stories random <unk> through it as the bonds supplied then index
+📝 Generated Text:
+  Conservative: hello good evening
+  Balanced: hello good evening and it is still not in the use of half
+  Creative: hello good evening <unk> a particular and over
 
+Enter 3 seed words: harsh nice weak
+🔄 Generating sequences...
 
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran
-Please enter exactly 3 seed words.
+📝 Generated Text:
+  Conservative: harsh nice weak
+  Balanced: harsh nice weak who <unk> to the the <unk> of the interview pushing and <unk>
+  Creative: harsh nice weak the earth and go to want the police news funds happen
 
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran usa
-Please enter exactly 3 seed words.
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran usa america
-One or more seed words are not in the vocabulary. Try again or type 'sample'.
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): iran india usa
-One or more seed words are not in the vocabulary. Try again or type 'sample'.
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): sample
-Sample vocabulary words: ['whipple', 'likes', 'census', 'eyes', 'things', 'trig', 'potentially', 'nightmare', 'hub', 'merging', 'condemned', 'happiness', '2', 'counterpart', 'furs', 'honeymoon', "palfrey's", 'descended', 'cuban', 'hotter']
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): census potentially merging
-Generating sequence, please wait...
-
-Generated sequence:
-census potentially merging partly account which came at it </s> will be so in the sort of god's processes defense last year <unk> in those who answer </s> too and openly attention with
-
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): america hot pizza
-One or more seed words are not in the vocabulary. Try again or type 'sample'.
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): pizza pizza pizza
-One or more seed words are not in the vocabulary. Try again or type 'sample'.
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): america america america
-Generating sequence, please wait...
-
-Generated sequence:
-america america america have held in the way war forced to match the chance number a lump kind of r politics <unk> who week nothing </s> that weather a resume breakdown of their
-
-
-Enter 3 seed words separated by spaces (or type 'sample' to see some options, or 'exit' to quit): exit  
-Exiting.
+Enter 3 seed words: exit
+Exiting. Goodbye!
 (phi2) PS C:\Dev\Genai\sannaLLM> 
