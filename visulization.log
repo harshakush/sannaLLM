@@ -1,0 +1,260 @@
+phi2) PS C:\Dev\Genai\sannaLLMv2>
+
+(phi2) PS C:\Dev\Genai\sannaLLMv2>
+(phi2) PS C:\Dev\Genai\sannaLLMv2> python .\sannaLLM2.py
+Using device: cpu
+Available CPU cores: 8
+PyTorch threads: 8
+PyTorch version: 2.7.0+cpu
+All outputs will be saved in: ngram_output_20250629_161540
+Loading files from: C:\Dev\Genai\sannaLLM\brown
+Found 503 files.
+Building vocabulary and loading sentences...
+Reading files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 503/503 [00:00<00:00, 543.42it/s]
+Total sentences loaded: 60922
+Total unique words (before filtering): 52849
+Total unique words in vocabulary (min freq 5): 14545
+Train sentences: 54829, Validation sentences: 6093
+Total parameters in model: 5698385
+Model is on device: cpu
+Learning rate scheduler initialized
+Hyperparameters saved.
+Preparing training and validation datasets...
+Train samples: 873759, Validation samples: 102111
+Using single-threaded DataLoader for Windows compatibility
+
+Starting training with improved early stopping:
+- Patience: 2 epochs
+- Minimum epochs before early stopping: 5
+- Improvement threshold: 0.0001
+Initial resource usage:
+CPU usage: 21.1%
+Memory usage: 23.2%
+
+============================================================
+- Patience: 2 epochs
+- Minimum epochs before early stopping: 5
+- Improvement threshold: 0.0001
+Initial resource usage:
+CPU usage: 21.1%
+Memory usage: 23.2%
+
+============================================================
+- Improvement threshold: 0.0001
+Initial resource usage:
+CPU usage: 21.1%
+Memory usage: 23.2%
+
+============================================================
+Initial resource usage:
+CPU usage: 21.1%
+Memory usage: 23.2%
+
+============================================================
+Epoch 1/2 starting...
+Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1707/1707 [03:35<00:00,  7.93it/s] 
+Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:08<00:00, 24.69it/s] 
+CPU usage: 21.1%
+Memory usage: 23.2%
+
+============================================================
+Epoch 1/2 starting...
+Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1707/1707 [03:35<00:00,  7.93it/s] 
+Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:08<00:00, 24.69it/s] 
+Memory usage: 23.2%
+
+============================================================
+Epoch 1/2 starting...
+Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1707/1707 [03:35<00:00,  7.93it/s] 
+Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:08<00:00, 24.69it/s] 
+
+Epoch 1 Results:
+Epoch 1/2 starting...
+Training Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1707/1707 [03:35<00:00,  7.93it/s] 
+Validation Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:08<00:00, 24.69it/s] 
+
+Epoch 1 Results:
+
+Epoch 1 Results:
+- Duration: 231.05 seconds
+- Train Loss: 6.152343
+- Val Loss: 6.005155
+- Perplexity: 405.51
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: inf
+- Estimated time remaining: 00:03:51
+✓ Validation loss improved by inf, model saved.
+
+============================================================
+Epoch 2/2 starting...
+Training Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 1707/1707 [04:14<00:00,  6.72it/s] 
+Validation Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 200/200 [00:08<00:00, 23.92it/s]
+
+Epoch 2 Results:
+- Duration: 270.17 seconds
+- Train Loss: 5.520048
+- Val Loss: 5.995066
+- Perplexity: 401.44
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: 6.005155
+✓ Validation loss improved by 0.010088, model saved.
+
+- Train Loss: 5.520048
+- Val Loss: 5.995066
+- Perplexity: 401.44
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: 6.005155
+✓ Validation loss improved by 0.010088, model saved.
+
+- Perplexity: 401.44
+- Learning Rate: 1.00e-03
+- Best Val Loss so far: 6.005155
+✓ Validation loss improved by 0.010088, model saved.
+
+✓ Validation loss improved by 0.010088, model saved.
+
+
+============================================================
+Training completed!
+Total time: 8.36 minutes
+Final best validation loss: 5.995066
+Final perplexity: 401.44
+Vocabulary saved.
+Enhanced training log saved.
+
+Loading best model from disk...
+
+Generating model visualizations...
+  Model Architecture...
+  Embedding Weights...
+  Weight Distributions...
+  Activation Flow...
+  Word Importance...
+  Network Graph...
+  Training Dynamics...
+  Prediction Analysis...
+All visualizations completed!
+Visualizations saved in: ngram_output_20250629_161540
+
+============================================================
+Auto-generating sample text with different strategies...
+
+Seed: 'the quick brown'
+  Greedy: the quick brown
+  Temp=0.8: the quick brown on the bottle
+  Top-k=10: the quick brown to be found in the <unk> of the <unk> and the <unk> of a <unk>
+
+Seed: 'in the beginning'
+  Greedy: in the beginning of the <unk>
+  Temp=0.8: in the beginning of the great <unk> of the <unk> arteries of the presidency and shot
+  Top-k=10: in the beginning of all the <unk> of <unk>
+
+Seed: 'it was a'
+  Greedy: it was a <unk> of <unk>
+  Temp=0.8: it was a proper department of international major candidate to show how as most of the paths reputation
+  Top-k=10: it was a small <unk> with a little more
+
+Seed: 'once upon a'
+  Greedy: once upon a <unk>
+  Temp=0.8: once upon a few minutes earlier from the second stage on <unk> <unk>
+  Top-k=10: once upon a new
+
+============================================================
+Interactive Text Generation
+Commands:
+  - Enter 3 seed words separated by spaces
+  - Type 'sample' to see vocabulary examples
+  - Type 'stats' to see model statistics
+  - Type 'exit' to quit
+
+Enter 3 seed words: india won war
+🔄 Generating sequences...
+
+📝 Generated Text:
+  Conservative: india won war
+  Balanced: india won war of it it is very simple that country is so many and there are two and to take a little <unk> and the soviet union
+  Creative: india won war the comprehensive discussed more helpful
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+Enter 3 seed words: india won war
+🔄 Generating sequences...
+
+📝 Generated Text:
+  Conservative: india won war
+  Balanced: india won war of it it is very simple that country is so many and there are two and to take a little <unk> and the soviet union
+  Creative: india won war the comprehensive discussed more helpful
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+
+🔄 Generating sequences...
+
+📝 Generated Text:
+  Conservative: india won war
+  Balanced: india won war of it it is very simple that country is so many and there are two and to take a little <unk> and the soviet union
+  Creative: india won war the comprehensive discussed more helpful
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+
+📝 Generated Text:
+  Conservative: india won war
+  Balanced: india won war of it it is very simple that country is so many and there are two and to take a little <unk> and the soviet union
+  Creative: india won war the comprehensive discussed more helpful
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+
+  Conservative: india won war
+  Balanced: india won war of it it is very simple that country is so many and there are two and to take a little <unk> and the soviet union
+  Creative: india won war the comprehensive discussed more helpful
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+
+  Creative: india won war the comprehensive discussed more helpful
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+
+
+Enter 3 seed words: india won war stats
+❌ Please enter exactly 3 seed words.
+
+❌ Please enter exactly 3 seed words.
+
+
+Enter 3 seed words: stats
+Model Statistics:
+Enter 3 seed words: stats
+Model Statistics:
+Model Statistics:
+  - Vocabulary size: 14,545
+  - Training samples: 873,759
+  - Vocabulary size: 14,545
+  - Vocabulary size: 14,545
+  - Training samples: 873,759
+  - Validation samples: 102,111
+  - Model parameters: 5,698,385
+  - Final perplexity: 401.44
+
+Enter 3 seed words: india england trade
+🔄 Generating sequences...
+
+📝 Generated Text:
+  Conservative: india england trade
+  Balanced: india england trade and guests the <unk> doctor to the <unk> of the store is a <unk> or in the secret and <unk> in <unk>
+  Creative: india england trade communications crime made some blame trip took by her head salesmen together apart on different sight
+
+Enter 3 seed words: india pakistan the
+🔄 Generating sequences...
+
+📝 Generated Text:
+  Conservative: india pakistan the <unk> of the <unk>
+  Balanced: india pakistan the primary <unk> commenced in the medium with the political exchange with humble they are involved in the absence of the <unk>
+  Creative: india pakistan the spencer ran hl april established movement
+
+Enter 3 seed words: exit
+Exiting. Goodbye!
+(phi2) PS C:\Dev\Genai\sannaLLMv2> 
