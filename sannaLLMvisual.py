@@ -102,7 +102,7 @@ def main():
     
     # === IMPROVED EARLY STOPPING SETTINGS ===
     patience = 8 #2 for testing 8 for regular 
-    min_epochs = 5
+    min_epochs = 10
     improvement_threshold = 1e-4
 
     # === DEVICE SETUP ===
@@ -154,7 +154,7 @@ def main():
         hidden_dim = 256
         output_dim = vocab_size
         ngram = 3
-        batch_size = 512
+        batch_size = 3084
 
         model = NgramWordLM(vocab_size, embedding_dim, hidden_dim, output_dim, ngram=ngram).to(device)
         total_params = sum(p.numel() for p in model.parameters())
@@ -193,19 +193,37 @@ def main():
         val_dataset = NgramDataset(val_inputs, val_targets)
 
         print("Using single-threaded DataLoader for Windows compatibility")
-        train_loader = DataLoader(
+        ''' train_loader = DataLoader(
             train_dataset, 
             batch_size=batch_size, 
             shuffle=True, 
-            num_workers=0,
+            num_workers=2,
             pin_memory=True if device.type == 'cuda' else False
         )
         val_loader = DataLoader(
             val_dataset, 
             batch_size=batch_size, 
             shuffle=False, 
-            num_workers=0,
+            num_workers=2,
             pin_memory=True if device.type == 'cuda' else False
+        )
+        '''
+        train_loader = DataLoader(
+        train_dataset, 
+        batch_size=batch_size,  # Increased batch size
+        shuffle=True, 
+        num_workers=32,    # More workers
+        pin_memory=True if device.type == 'cuda' else False,
+        prefetch_factor=32 # More batches prefetched per worker
+        )
+
+        val_loader = DataLoader(
+        val_dataset, 
+        batch_size=batch_size,  # Increased batch size
+        shuffle=False, 
+        num_workers=32,    # More workers
+        pin_memory=True if device.type == 'cuda' else False,
+        prefetch_factor=32 # More batches prefetched per worker
         )
 
         best_val_loss = float('inf')
