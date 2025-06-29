@@ -1,5 +1,5 @@
 # sannaLLM
-Quest to build a llm from scratch, based on n-gram feed forward neural network which supports 5698385 parameters.
+Quest to build a llm from scratch, based on n-gram feed forward neural network which supports 5698385(5M) parameters.
 
 Total sentences loaded: 60922
 Total unique words (before filtering): 52849
