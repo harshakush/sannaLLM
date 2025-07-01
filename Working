@@ -1,0 +1,43 @@
+Step-by-Step: How Your 3-gram Feedforward Model Works
+Token Embeddings Creation
+During training, each unique word (token) in your vocabulary is assigned a 128-dimensional embedding vector.
+These embeddings are randomly initialized and learned/updated as training progresses.
+Data Preparation
+The input text is broken into overlapping 3-grams (sequences of 3 tokens).
+These 3-grams are grouped into batches of size 512. So, each batch is a [512, 3] array of token indices.
+Embedding Lookup and Flattening
+For each 3-gram in the batch, you look up the 128-dim embedding for each token, resulting in a [512, 3, 128] tensor.
+You flatten each 3-gram’s embeddings into a single vector of length 384 (3 * 128), resulting in a [512, 384] tensor for the batch.
+First Linear Layer (fc1)
+The [512, 384] tensor is passed through fc1, which has weights [256, 384] and bias [256] (randomly initialized at first).
+The output is [512, 256]—each 3-gram is now represented by a 256-dim vector.
+Nonlinearity (ReLU)
+The model applies a ReLU activation to introduce nonlinearity.
+Second Linear Layer (fc2)
+The [512, 256] tensor is passed through fc2, which has weights [vocab_size, 256] and bias [vocab_size].
+The output is [512, vocab_size]—for each 3-gram, a score for every word in the vocabulary.
+Softmax and Loss Calculation
+Softmax is applied to each [vocab_size] vector to get probabilities.
+The model compares the predicted probabilities to the actual next word (the label) and computes the loss (e.g., cross-entropy loss).
+Training Loop
+This process is repeated for all batches in the dataset, for each epoch (up to 10 epochs, or until early stopping if the loss stops improving).
+The model updates its weights and biases in both fc1 and fc2 to minimize the loss.
+After Training
+The model has learned weights and embeddings that map any 3-gram to a probability distribution over the vocabulary.
+Prediction/Generation
+When a user inputs a 3-gram prompt, the model:
+Looks up embeddings, flattens, passes through fc1 and fc2, applies softmax.
+The output is a probability distribution over all vocab words.
+The word with the highest probability is selected as the next token.
+Clarification on Output
+The model does not store a [512*1800, vocab_size] matrix after training.
+Instead, it stores the learned weights and embeddings.
+For any new 3-gram input, the model computes the [vocab_size] output vector on the fly using these learned parameters.
+On “Looking for What is Closer”
+The model does not directly compare the input 3-gram to all vocab embeddings for similarity.
+Instead, it uses the learned weights in fc2 to transform the 256-dim context vector into scores for each vocab word.
+The word with the highest score (after softmax) is the prediction.
+In summary:
+You’ve described the process very well! The only tweak is that the model doesn’t store all possible outputs—it stores the parameters, and computes the output for any input 3-gram using those parameters. The prediction is made by passing the input through the network, not by direct similarity search.
+
+If you want a diagram or code snippet to visualize this, just ask!
