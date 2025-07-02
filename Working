@@ -52,6 +52,10 @@ Layer	What it does	Input shape	Output shape
 4. ReLU	Non-linearity	[B, 256]	[B, 256]
 5. fc2	Hidden → vocab-size logits	[B, 256]	[B, vocab_size]
 6. Softmax	Logits → probabilities	[B, vocab_size]	[B, vocab_size]
-7. Output	Pick next word (argmax or sample)	[B, vocab_size]	[B] (word index)
+
+
+
+During the run.
+1. Output	Pick next word (argmax or sample)	[B, vocab_size]	[B] (word index)
 
 
