@@ -41,3 +41,16 @@ In summary:
 You’ve described the process very well! The only tweak is that the model doesn’t store all possible outputs—it stores the parameters, and computes the output for any input 3-gram using those parameters. The prediction is made by passing the input through the network, not by direct similarity search.
 
 If you want a diagram or code snippet to visualize this, just ask!
+
+
+
+Summary Table
+Layer	What it does	Input shape	Output shape
+1. Embedding	Token indices → dense vectors	[B, 3]	[B, 3, 128]
+2. Flatten	3 embeddings → 1 long vector	[B, 3, 128]	[B, 384]
+3. fc1	Linear transformation to hidden space	[B, 384]	[B, 256]
+4. ReLU	Non-linearity	[B, 256]	[B, 256]
+5. fc2	Hidden → vocab-size logits	[B, 256]	[B, vocab_size]
+6. Softmax	Logits → probabilities	[B, vocab_size]	[B, vocab_size]
+7. Output	Pick next word (argmax or sample)	[B, vocab_size]	[B] (word index)
+
