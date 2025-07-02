@@ -54,3 +54,4 @@ Layer	What it does	Input shape	Output shape
 6. Softmax	Logits → probabilities	[B, vocab_size]	[B, vocab_size]
 7. Output	Pick next word (argmax or sample)	[B, vocab_size]	[B] (word index)
 
+
