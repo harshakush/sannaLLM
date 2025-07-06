@@ -8,10 +8,13 @@ from collections import Counter
 import numpy as np
 from tqdm import tqdm
 import glob
+import argparse
 
-# Limit CPU threads for reproducibility and avoid oversubscription
-os.environ["OMP_NUM_THREADS"] = "4"
-os.environ["MKL_NUM_THREADS"] = "4"
+# ========== THREADING FOR DATA LOADING ==========
+torch.set_num_threads(8)
+torch.set_num_interop_threads(2)
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["MKL_NUM_THREADS"] = "8"
 
 # ========== DATA PREP ==========
 
@@ -66,19 +69,49 @@ class TransformerLM(nn.Module):
         logits = self.fc_out(x)
         return logits
 
+# ========== CHECKPOINTING ==========
+
+def save_checkpoint(model, optimizer, epoch, best_val_loss, checkpoint_path="checkpoint.pt"):
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'best_val_loss': best_val_loss,
+    }, checkpoint_path)
+    print(f"Checkpoint saved at epoch {epoch+1}.")
+
+def load_checkpoint(model, optimizer, checkpoint_path="checkpoint.pt"):
+    checkpoint = torch.load(checkpoint_path)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    epoch = checkpoint['epoch']
+    best_val_loss = checkpoint['best_val_loss']
+    print(f"Checkpoint loaded from epoch {epoch+1}.")
+    return epoch, best_val_loss
+
+def should_pause():
+    return os.path.exists("PAUSE.TXT")
+
 # ========== TRAINING LOOP ==========
 
-def train_epoch(model, loader, optimizer, criterion, device):
+def train_epoch(model, loader, optimizer, criterion, device, epoch, best_val_loss, checkpoint_path):
     model.train()
     total_loss = 0
-    for x, y in tqdm(loader, desc="Train", leave=False):
-        x, y = x.to(device), y.to(device)
+    for batch_idx, (x, y) in enumerate(tqdm(loader, desc="Train", leave=False)):
+        x, y = x.to(device, non_blocking=False), y.to(device, non_blocking=False)
         optimizer.zero_grad()
         logits = model(x)
         loss = criterion(logits.view(-1, logits.size(-1)), y.view(-1))
         loss.backward()
         optimizer.step()
         total_loss += loss.item() * x.size(0)
+
+        # Check for pause signal after each batch
+        if should_pause():
+            print("\nPause signal detected. Saving checkpoint and exiting...")
+            save_checkpoint(model, optimizer, epoch, best_val_loss, checkpoint_path)
+            print("You can now safely restart your machine. To resume, run with --resume.")
+            exit(0)
     return total_loss / len(loader.dataset)
 
 def eval_epoch(model, loader, criterion, device):
@@ -86,7 +119,7 @@ def eval_epoch(model, loader, criterion, device):
     total_loss = 0
     with torch.no_grad():
         for x, y in tqdm(loader, desc="Eval", leave=False):
-            x, y = x.to(device), y.to(device)
+            x, y = x.to(device, non_blocking=False), y.to(device, non_blocking=False)
             logits = model(x)
             loss = criterion(logits.view(-1, logits.size(-1)), y.view(-1))
             total_loss += loss.item() * x.size(0)
@@ -98,24 +131,32 @@ def calculate_perplexity(loss):
 # ========== MAIN SCRIPT ==========
 
 def main():
-    # --- Hyperparameters tuned for MX250 ---
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--pause', action='store_true', help='Pause training at the end of the next batch')
+    parser.add_argument('--resume', action='store_true', help='Resume training from last checkpoint')
+    parser.add_argument('--restart', action='store_true', help='Restart training from scratch')
+    args = parser.parse_args()
+
+    # --- Hyperparameters ---
     seq_len = 32
-    batch_size = 512      # Small batch size to fit in 2GB VRAM
-    emb_size = 128       # Smaller embedding size
-    nhead = 4            # Fewer heads
-    num_layers = 2       # Fewer layers
+    batch_size = 64
+    emb_size = 128
+    nhead = 4
+    num_layers = 2
     dim_feedforward = 256
     dropout = 0.1
     num_epochs = 5
     lr = 3e-4
     min_freq = 2
     max_seq_len = seq_len
-    num_workers = 0      # For Windows and small RAM, use 0 or 1
-    pin_memory = torch.cuda.is_available()
-    
+    num_workers = 1
+    pin_memory = False
+    checkpoint_path = "checkpoint.pt"
+
     # --- Data Loading from local folder ---
-    folder_path = r"C:\Dev\Genai\sannaLLM\data\brown"
+    folder_path = r"C:\Dev\sannaLLM\brown"
     all_filenames = [f for f in glob.glob(os.path.join(folder_path, "*")) if os.path.isfile(f)]
+    print("Files found:", all_filenames)
     sentences = []
     for filename in all_filenames:
         with open(filename, 'r', encoding='utf-8') as f:
@@ -146,17 +187,27 @@ def main():
     )
 
     # --- Model, Optimizer, Loss ---
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     print(f"Using device: {device}")
     model = TransformerLM(vocab_size, emb_size, nhead, num_layers, dim_feedforward, max_seq_len, dropout).to(device)
     optimizer = optim.AdamW(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss(ignore_index=word2idx['<pad>'])
 
-    # --- Training Loop ---
+    # --- Checkpoint Handling ---
+    start_epoch = 0
     best_val_loss = float('inf')
-    for epoch in range(num_epochs):
+    if args.resume and os.path.exists(checkpoint_path):
+        start_epoch, best_val_loss = load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch += 1  # Continue from next epoch
+    elif args.restart:
+        print("Restarting training from scratch. Previous checkpoints will be overwritten.")
+        start_epoch = 0
+        best_val_loss = float('inf')
+
+    # --- Training Loop ---
+    for epoch in range(start_epoch, num_epochs):
         print(f"\nEpoch {epoch+1}/{num_epochs}")
-        train_loss = train_epoch(model, train_loader, optimizer, criterion, device)
+        train_loss = train_epoch(model, train_loader, optimizer, criterion, device, epoch, best_val_loss, checkpoint_path)
         val_loss = eval_epoch(model, val_loader, criterion, device)
         print(f"Train loss: {train_loss:.4f} | Val loss: {val_loss:.4f} | Val ppl: {calculate_perplexity(val_loss):.2f}")
 
@@ -164,6 +215,14 @@ def main():
             best_val_loss = val_loss
             torch.save(model.state_dict(), "best_transformer_lm.pt")
             print("Model saved.")
+
+        # Save checkpoint after each epoch
+        save_checkpoint(model, optimizer, epoch, best_val_loss, checkpoint_path)
+
+        # If --pause was passed, pause at the end of the epoch
+        if args.pause:
+            print("Pausing training as requested by --pause.")
+            break
 
     print("Training complete.")
 
